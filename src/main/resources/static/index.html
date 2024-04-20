@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Завантаження файлу</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 80vh;
+            flex-direction: column;
+        }
+        #fileList {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+<h2>Завантаження XML файлу</h2>
+<form action="/upload" method="post" enctype="multipart/form-data">
+    <label for="file">Виберіть файл для завантаження:</label><br>
+    <input type="file" id="file" name="file"><br><br>
+    <input type="submit" value="Завантажити">
+</form>
+<button onclick="showFiles()">Показати імена файлів</button>
+<div id="fileList"></div>
+
+<script>
+    function showFiles() {
+        var xhr = new XMLHttpRequest();
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState === XMLHttpRequest.DONE) {
+                if (xhr.status === 200) {
+                    var fileList = JSON.parse(xhr.responseText);
+                    var fileListHTML = "<h2>Список завантажених файлів:</h2><ul>";
+                    fileList.forEach(function(fileName) {
+                        fileListHTML += "<li>" + fileName + "</li>";
+                    });
+                    fileListHTML += "</ul>";
+                    document.getElementById("fileList").innerHTML = fileListHTML;
+                } else {
+                    console.error("Помилка запиту: " + xhr.status);
+                }
+            }
+        };
+        xhr.open("GET", "/files", true);
+        xhr.send();
+    }
+</script>
+</body>
+</html>
